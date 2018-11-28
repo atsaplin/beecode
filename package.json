@@ -1,0 +1,24 @@
+{
+  "name": "beecode",
+  "version": "1.0.0",
+  "description": "Ecobee Sharing App",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": "Aleksey Tsaplin",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atsaplin/beecode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/atsaplin/beecode/issues"
+  },
+  "homepage": "https://github.com/atsaplin/beecode#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.7"
+  }
+}
