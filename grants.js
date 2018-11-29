@@ -48,7 +48,7 @@ var getGrants = async function (req, res) {
         return
     }
 
-    await db.DBgetDB().collection('grants').find({}, {
+    await db.DBgetDB().collection('grants').find({user_id : req.body.user_id}, {
         projection: {
             _id: 0,
             access_token: 0
