@@ -15,3 +15,4 @@ app.listen(3000, () => {
 app.post('/api/registerOwner', authentication.RegisterOwner)
 app.post('/api/addGrant', grants.AddGrant)
 app.post('/api/getGrants', grants.GetGrants)
+app.post('/api/removeGrant', grants.RemoveGrant)

@@ -48,22 +48,36 @@ var getGrants = async function (req, res) {
         return
     }
 
-
-    await db.DBgetDB().collection('grants').find({ user_id: req.body.user_id }, {
+    await db.DBgetDB().collection('grants').find({}, {
         projection: {
             _id: 0,
             access_token: 0
         }
     }).toArray(function (err, result) {
         if (err) throw err;
-        grants = {result}
+        grants = { result }
         res.status(200).send(grants)
     });
+}
+
+var removeGrant = async function (req, res) {
+    if (!(await authentication.CheckAuthentication(req.body))) {
+        res.status(401).send({
+            Error: "Authentication Error",
+            Message: "Provided auth_token or user_id failed authentication"
+        })
+        return
+    }
 
 
+    await db.DBgetDB().collection('grants').findOneAndDelete({ user_id: req.body.user_id, access_code: req.body.access_code }, function (err, result) {
+        if (err) throw err;
+        res.status(200).send(result)
+    })
 }
 
 module.exports = {
     AddGrant: addGrant,
-    GetGrants: getGrants
+    GetGrants: getGrants,
+    RemoveGrant: removeGrant
 }
