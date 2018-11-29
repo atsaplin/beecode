@@ -1,0 +1,29 @@
+Register Owner
+{
+    "user_id": "aleksey",
+    "access_token": "EcmzzkXrcFPe3sLDdNCqio0W0UldqO6t",
+    "refresh_token": "anzSesucmbo4w8tSJlSVDRf7A0fWfjno",
+    "expires_in": 9
+}
+
+Response
+{
+    "user_id": "aleksey",
+    "access_token": "EcmzzkXrcFPe3sLDdNCqio0W0UldqO6t",
+    "refresh_token": "anzSesucmbo4w8tSJlSVDRf7A0fWfjno",
+    "expires_in": 9,
+    "auth_token": "4ff6c1b792f80147c9365ce897c00d9093006578c28c457eb8f1d2535025aae4"
+}
+
+
+
+Add Grant
+{
+    "user_id": "aleksey",
+    "auth_token": "4ff6c1b792f80147c9365ce897c00d9093006578c28c457eb8f1d2535025aae4",
+    "thermostats" : ["1242412","2142145"],
+    "home": "Home",
+    "address": "California",
+    "start": 1575992359,
+    "end": 1575992359
+}

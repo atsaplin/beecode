@@ -1,17 +1,16 @@
 const express = require('express');
-const MongoClient = require('mongodb').MongoClient
 const app = express();
-var env = process.env.NODE_ENV || 'production';
-var config = require('./config')[env];
+var bodyParser = require('body-parser')
+var authentication = require('./authentication')
+var grants = require('./grants')
 
-MongoClient.connect(config.server.port, (err, database) => {
-    // ... start the server
-})
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
 
-app.listen(3000, function () {
+app.listen(3000, () => {
     console.log('listening on 3000')
 })
 
-app.get('/', (req, res) => {
-    res.send('Testing')
-})
+app.post('/api/registerOwner', authentication.RegisterOwner)
+app.post('/api/addGrant', grants.AddGrant)
