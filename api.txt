@@ -20,10 +20,77 @@ Response
 Add Grant
 {
     "user_id": "aleksey",
-    "auth_token": "4ff6c1b792f80147c9365ce897c00d9093006578c28c457eb8f1d2535025aae4",
+    "auth_token": "2vympw8iAbA4v2C3OgEtsYZpquXeAJgB",
     "thermostats" : ["1242412","2142145"],
     "home": "Home",
     "address": "California",
     "start": 1575992359,
     "end": 1575992359
+}
+
+Response
+{
+    "user_id": "aleksey",
+    "thermostats": [
+        "1242412",
+        "2142145"
+    ],
+    "home": "Home",
+    "address": "California",
+    "start": 1575992359,
+    "end": 1575992359,
+    "access_token": null,
+    "access_code": "PITO46",
+    "redeemed": false
+}
+
+GetGrants
+{
+    "user_id": "aleksey",
+    "auth_token": "2vympw8iAbA4v2C3OgEtsYZpquXeAJgB"
+}
+
+Response
+{
+    "result": [
+        {
+            "user_id": "aleksey",
+            "thermostats": [
+                "1242412",
+                "2142145"
+            ],
+            "home": "Home",
+            "address": "California",
+            "start": 1575992359,
+            "end": 1575992359,
+            "access_code": "V2SA2V",
+            "redeemed": false
+        },
+        {
+            "user_id": "aleksey",
+            "thermostats": [
+                "1242412",
+                "2142145"
+            ],
+            "home": "Home",
+            "address": "California",
+            "start": 1575992359,
+            "end": 1575992359,
+            "access_code": "GO4KQ4",
+            "redeemed": false
+        },
+        {
+            "user_id": "aleksey",
+            "thermostats": [
+                "1242412",
+                "2142145"
+            ],
+            "home": "Home",
+            "address": "California",
+            "start": 1575992359,
+            "end": 1575992359,
+            "access_code": "PITO46",
+            "redeemed": false
+        }
+    ]
 }

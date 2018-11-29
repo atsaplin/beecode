@@ -2,10 +2,8 @@ var db = require('./db')
 const crypto = require('crypto');
 const http = require('https')
 var config = require('./config');
+var randomstring = require("randomstring");
 
-var generateToken = function() {
-    return crypto.randomBytes(32).toString('hex')
-}
 
 var getNewAuthToken = function (ownerDocument) {
     return new Promise(function (resolve, reject) {
@@ -36,8 +34,8 @@ var getNewAuthToken = function (ownerDocument) {
     })
 }
 
-var checkAuthentication = async function(query){
-    if(!query.auth_token || !query.user_id){
+var checkAuthentication = async function (query) {
+    if (!query.auth_token || !query.user_id) {
         console.log("Authentication check with missing auth_token or user_id")
         return false
     }
@@ -49,6 +47,13 @@ var checkAuthentication = async function(query){
 
     console.log(`Authentication failure for ${query.user_id}`)
     return false
+}
+
+var removeOwner = async function (user_id) {
+    console.log(`Deleting user ${user_id}`)
+    db.DBgetDB().collection('owners').findOneAndDelete({ user_id: user_id }).then(
+        db.DBgetDB().collection('grants').deleteMany({user_id: user_id})
+    )
 }
 
 var registerOwner = async function (req, res) {
@@ -65,7 +70,7 @@ var registerOwner = async function (req, res) {
         access_token: req.body.access_token,
         refresh_token: req.body.refresh_token,
         expires_in: req.body.expires_in,
-        auth_token: generateToken()
+        auth_token: randomstring.generate()
     }
 
     console.log(`Attempting to register user ${req.body.user_id}`)
@@ -97,13 +102,13 @@ var registerOwner = async function (req, res) {
         }
     }
 
-    if (!alreadyExistsAndValid){
+    if (!alreadyExistsAndValid) {
         //validate the new document
         const authPromise = await getNewAuthToken(newDoc)
         if (authPromise.error) {
             res.status(401).send(authPromise)
             console.log(`${req.body.user_id} no longer valid, removing from the database`)
-            await db.DBgetDB().collection('owners').findOneAndDelete({user_id: newDoc.user_id})
+            removeOwner(req.body.user_id)
             return
         }
     }
@@ -111,20 +116,20 @@ var registerOwner = async function (req, res) {
     //update with either the new provided tokens, or the ones obtained from when we performed
     //a check against the existing key
     await db.DBgetDB().collection('owners').findOneAndUpdate(
-        { user_id: newDoc.user_id }, 
-        { $set: newDoc},
+        { user_id: newDoc.user_id },
+        { $set: newDoc },
         {
             new: true,   // return new doc if one is upserted
             upsert: true // insert the document if it does not exist)
         }
     )
 
-    if (alreadyExistsAndValid){
+    if (alreadyExistsAndValid) {
         res.status(400).send({
             Error: "Authorization error",
             Message: `${req.body.user_id} already has valid refresh token`
         })
-    }else if (newTokenValid){
+    } else if (newTokenValid) {
         res.status(200).send(newDoc)
     }
 }
