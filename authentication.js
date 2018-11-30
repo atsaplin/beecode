@@ -15,7 +15,7 @@ var refreshToken = async function (user_id) {
     const response = await requestAuthToken(user_id, "grant_type=refresh_token" + "&refresh_token=" + doc.refresh_token)
 
     if (response.error) {
-        console.log(`${user_id} no longer valid, removing from the database`)
+        console.log(`${user_id} failed to refresh token, assuming revoked`)
         removeOwner(user_id)
     }
 
@@ -156,5 +156,6 @@ var addApplication = async function (req, res) {
 module.exports = {
     CheckAuthenticationOwner: checkAuthenticationOwner,
     AddApplication: addApplication,
-    RefreshToken: refreshToken
+    RefreshToken: refreshToken,
+    RemoveOwner: removeOwner
 }
