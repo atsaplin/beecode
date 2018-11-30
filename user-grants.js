@@ -35,11 +35,22 @@ var validateGrant = async function (query, res) {
             })
             throw "Grant Not Yet Active"
         }
+    }else{
+        res.status(401).send({
+            error: "Grant Invalid",
+            message: "This grant has been revoked or never existed"
+        })
+        throw "Grant Invalid"
     }
 }
 
 var getGrant = async function (req, res) {
-    await validateGrant(req.body, res)
+    try {
+        await validateGrant(req.body, res)
+    }
+    catch (error) {
+        return
+    }
 
     var grant = await db.DBgetDB().collection('grants').findOne({ redeemed: true, access_token: req.body.access_token })
 

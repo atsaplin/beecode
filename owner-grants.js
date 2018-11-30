@@ -3,7 +3,12 @@ var authentication = require('./authentication')
 var randomstring = require("randomstring");
 
 var addGrant = async function (req, res) {
-    await authentication.CheckAuthenticationOwner(req.body, res)
+    try {
+        await authentication.CheckAuthenticationOwner(req.body, res)
+    }
+    catch (error) {
+        return
+    }
 
     var access_code = randomstring.generate({
         length: 6,
@@ -28,9 +33,14 @@ var addGrant = async function (req, res) {
 }
 
 var getGrants = async function (req, res) {
-    await authentication.CheckAuthenticationOwner(req.body, res)
+    try {
+        await authentication.CheckAuthenticationOwner(req.body, res)
+    }
+    catch (error) {
+        return
+    }
 
-    await db.DBgetDB().collection('grants').find({user_id : req.body.user_id}, {
+    await db.DBgetDB().collection('grants').find({ user_id: req.body.user_id }, {
         projection: {
             _id: 0,
             access_token: 0
@@ -43,7 +53,12 @@ var getGrants = async function (req, res) {
 }
 
 var removeGrant = async function (req, res) {
-    await authentication.CheckAuthenticationOwner(req.body, res)
+    try {
+        await authentication.CheckAuthenticationOwner(req.body, res)
+    }
+    catch (error) {
+        return
+    }
 
     await db.DBgetDB().collection('grants').findOneAndDelete({ user_id: req.body.user_id, access_code: req.body.access_code }, function (err, result) {
         if (err) throw err;

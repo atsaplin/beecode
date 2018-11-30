@@ -158,5 +158,6 @@ var addApplication = async function (req, res) {
 
 module.exports = {
     CheckAuthenticationOwner: checkAuthenticationOwner,
-    AddApplication: addApplication
+    AddApplication: addApplication,
+    RefreshToken: refreshToken
 }
