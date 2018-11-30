@@ -185,11 +185,13 @@ var addApplication = async function (req, res) {
             if (JSON.parse(d).success) {
                 const authPromise = await requestFirstTimeAuthToken(req.body)
                 if (!authPromise.error) {
+                    
+                    var ts = Math.round((new Date()).getTime() / 1000);
                     var ownerDoc = {
                         user_id: req.body.userName,
                         access_token: authPromise.access_token,
                         refresh_token: authPromise.refresh_token,
-                        expires_in: authPromise.expires_in
+                        expires_in: ts + authPromise.expires_in
                     }
                     const addedOwner = await registerOwner(ownerDoc)
                     if (addedOwner.error){
@@ -199,6 +201,8 @@ var addApplication = async function (req, res) {
                     res.status(200).send(addedOwner)
                     return
                 }
+                res.status(401).send(authPromised)
+                return
             }
             res.status(401).send(d)
         })
