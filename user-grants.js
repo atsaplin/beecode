@@ -35,6 +35,8 @@ var validateGrant = async function (query, res) {
             })
             throw "Grant Not Yet Active"
         }
+
+        return doc
     }else{
         res.status(401).send({
             error: "Grant Invalid",

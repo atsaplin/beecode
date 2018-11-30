@@ -22,5 +22,5 @@ app.post('/api/addApplication', authentication.AddApplication)
 app.post('/api/user_activateGrant', user_grants.ActivateGrant)
 
 
-app.post('/api/user_getTemperature', api_requests.GetTemperature)
+app.post('/api/user_getTstatInfo', api_requests.GetTstatInfo)
 
