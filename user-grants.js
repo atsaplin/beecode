@@ -99,5 +99,6 @@ var activateGrant = async function (req, res) {
 
 module.exports = {
     GetGrant: getGrant,
+    ValidateGrant: validateGrant,
     ActivateGrant: activateGrant
 }
