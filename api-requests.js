@@ -9,15 +9,15 @@ var getAccessToken = function (user_id, res) {
 }
 
 var getTstatInfo = async function (req, res) {
-    var grant
-    try {
-        grant = await user_grants.ValidateGrant(req.body, res)
-    }
-    catch (error) {
-        return
-    }
+    // var grant
+    // try {
+    //     grant = await user_grants.ValidateGrant(req.body, res)
+    // }
+    // catch (error) {
+    //     return
+    // }
 
-    const doc = await db.DBgetUserByID(grant.user_id)
+    // const doc = await db.DBgetUserByID(grant.user_id)
 
 
     res.status(200).send(response)
