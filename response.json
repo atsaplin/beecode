@@ -1,10 +1,4 @@
 {
-  "page": {
-    "page": 1,
-    "totalPages": 1,
-    "pageSize": 1,
-    "total": 1
-  },
   "thermostatList": [
     {
       "identifier": "511826697704",
@@ -222,9 +216,5 @@
         }
       ]
     }
-  ],
-  "status": {
-    "code": 0,
-    "message": ""
-  }
+  ]
 }
