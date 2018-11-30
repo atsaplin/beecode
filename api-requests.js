@@ -25,27 +25,8 @@ var getAccessToken = async function (userDoc, res) {
 }
 
 var getTstatInfo = async function (req, res) {
-    var grant
-    try {
-        grant = await user_grants.ValidateGrant(req.body, res)
-    }
-    catch (error) {
-        return
-    }
-
-    const doc = await db.DBgetUserByID(grant.user_id)
-    var token = await getAccessToken(doc, res)
-
-    // Set the headers
-    var headers = {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'text/json'
-    }
-
     var query = {
         "selection": {
-            "selectionType": "thermostats",
-            "selectionMatch": grant.thermostats.join(),
             "includeRuntime": true,
             "includeEvents": true,
             "includeSettings": true,
@@ -53,42 +34,104 @@ var getTstatInfo = async function (req, res) {
             "includeEquipmentStatus": true
         }
     }
-
-    const options = {
-        hostname: 'api.ecobee.com',
-        path: '/1/thermostat?format=json&body=' + JSON.stringify(query),
-        headers,
-        method: 'GET',
-    };
-
-    const reqPost = http.request(options, (resPost) => {
-        resPost.setEncoding('utf8')
-        var data = ""
-        resPost.on('data', async (d) => {
-            //var doc = JSON.parse(d)
-            if (d){
-                data += d
-            }
-        })
-
-        resPost.on('end', async (d) => {
-            data = JSON.parse(data)
-            if (data.status.code == 0) {
-                data = getMinData(data)
-                res.status(200).send(data)
-            }else{ //failed to authernticate
-                res.status(401).send(data)
-                console.log(`${grant.user_id} failed authentication`)
-                authentication.RemoveOwner(grant.user_id)
-            }
-        })
-    });
-
-    reqPost.write('')
-    reqPost.end()
+    var response = await makeRequest(req, res, query, 'GET')
+    res.status(200).send(getMinData(response))
 }
 
-var getMinData = function (fullResponse){
+var setHold = async function (req, res) {
+    if (!req.body.heat || !req.body.cool) {
+        res.status(422).send({
+            error: "Missing parameters",
+            message: "Must provide heat, cool"
+        })
+        return
+    }
+
+    var query = {
+        "selection": {
+            "includeRuntime": true,
+            "includeEvents": true,
+            "includeSettings": true,
+            "includeSensors": true,
+            "includeEquipmentStatus": true
+        },
+        "functions": [
+            {
+                "type": "setHold",
+                "params": {
+                    "holdType": "indefinite",
+                    "heatHoldTemp": req.body.heat,
+                    "coolHoldTemp": req.body.cool
+                }
+            }
+        ]
+    }
+    res.status(200).send(makeRequest(req, res, query, 'POST'))
+}
+
+var makeRequest = function (req, res, query, requestType) {
+
+    return new Promise(async function (resolve, reject) {
+        var grant
+        try {
+            grant = await user_grants.ValidateGrant(req.body, res)
+        }
+        catch (error) {
+            return
+        }
+
+        const doc = await db.DBgetUserByID(grant.user_id)
+        var token = await getAccessToken(doc, res)
+
+        // Set the headers
+        var headers = {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'text/json'
+        }
+
+        query.selection.selectionType = "thermostats"
+        query.selection.selectionMatch = grant.thermostats.join()
+
+
+        const options = {
+            hostname: 'api.ecobee.com',
+            path: '/1/thermostat?format=json&body=' + JSON.stringify(query),
+            headers,
+            method: requestType,
+        };
+
+        const reqPost = http.request(options, (resPost) => {
+            resPost.setEncoding('utf8')
+            var data = ""
+            resPost.on('data', async (d) => {
+                //var doc = JSON.parse(d)
+                if (d) {
+                    data += d
+                }
+            })
+
+            resPost.on('end', async (d) => {
+                data = JSON.parse(data)
+                if (data.status.code == 0) {
+                    resolve(data)
+                } else { //failed to authernticate
+                    res.status(401).send(data)
+                    console.log(`${grant.user_id} failed authentication`)
+                    authentication.RemoveOwner(grant.user_id)
+                }
+            })
+        });
+
+        req.on('error', (error) => {
+            reject(error)
+        })
+
+        reqPost.write('')
+        reqPost.end()
+    })
+}
+
+var getMinData = function (fullResponse) {
     const tstat = fullResponse.thermostatList[0]
     var response = {
         identifier: tstat.identifier,
@@ -110,5 +153,6 @@ var getMinData = function (fullResponse){
 }
 
 module.exports = {
-    GetTstatInfo: getTstatInfo
+    GetTstatInfo: getTstatInfo,
+    SetHold: setHold
 }

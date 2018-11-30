@@ -23,4 +23,5 @@ app.post('/api/user_activateGrant', user_grants.ActivateGrant)
 
 
 app.post('/api/user_getTstatInfo', api_requests.GetTstatInfo)
+app.post('/api/user_SetHold', api_requests.SetHold)
 
