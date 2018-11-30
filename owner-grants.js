@@ -3,7 +3,7 @@ var authentication = require('./authentication')
 var randomstring = require("randomstring");
 
 var addGrant = async function (req, res) {
-    if (!(await authentication.CheckAuthentication(req.body))) {
+    if (!(await authentication.CheckAuthenticationOwner(req.body))) {
         res.status(401).send({
             Error: "Authentication Error",
             Message: "Provided auth_token or user_id failed authentication"
@@ -40,7 +40,7 @@ var addGrant = async function (req, res) {
 }
 
 var getGrants = async function (req, res) {
-    if (!(await authentication.CheckAuthentication(req.body))) {
+    if (!(await authentication.CheckAuthenticationOwner(req.body))) {
         res.status(401).send({
             Error: "Authentication Error",
             Message: "Provided auth_token or user_id failed authentication"
@@ -61,14 +61,13 @@ var getGrants = async function (req, res) {
 }
 
 var removeGrant = async function (req, res) {
-    if (!(await authentication.CheckAuthentication(req.body))) {
+    if (!(await authentication.CheckAuthenticationOwner(req.body))) {
         res.status(401).send({
             Error: "Authentication Error",
             Message: "Provided auth_token or user_id failed authentication"
         })
         return
     }
-
 
     await db.DBgetDB().collection('grants').findOneAndDelete({ user_id: req.body.user_id, access_code: req.body.access_code }, function (err, result) {
         if (err) throw err;

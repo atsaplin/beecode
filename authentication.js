@@ -34,7 +34,7 @@ var getNewAuthToken = function (ownerDocument) {
     })
 }
 
-var checkAuthentication = async function (query) {
+var checkAuthenticationOwner = async function (query) {
     if (!query.auth_token || !query.user_id) {
         console.log("Authentication check with missing auth_token or user_id")
         return false
@@ -48,6 +48,7 @@ var checkAuthentication = async function (query) {
     console.log(`Authentication failure for ${query.user_id}`)
     return false
 }
+
 
 var removeOwner = async function (user_id) {
     console.log(`Deleting user ${user_id}`)
@@ -136,5 +137,5 @@ var registerOwner = async function (req, res) {
 
 module.exports = {
     RegisterOwner: registerOwner,
-    CheckAuthentication: checkAuthentication
+    CheckAuthenticationOwner: checkAuthenticationOwner
 }
