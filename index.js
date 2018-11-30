@@ -14,7 +14,7 @@ app.listen(3000, () => {
 })
 
 app.post('/api/addGrant', owner_grants.AddGrant)
-app.post('/api/getGrants', owner_grants.GetGrants)
+app.get('/api/getGrants', owner_grants.GetGrants)
 app.post('/api/removeGrant', owner_grants.RemoveGrant)
 app.get('/api/user_getGrant', user_grants.GetGrant)
 app.post('/api/addApplication', authentication.AddApplication)

@@ -1,9 +1,7 @@
 var db = require('./db')
-const crypto = require('crypto');
 const http = require('https')
 var config = require('./config');
 var randomstring = require("randomstring");
-var request = require('request');
 
 var refreshToken = async function (user_id) {
     const doc = await db.DBgetUserByID(user_id)
@@ -23,7 +21,6 @@ var refreshToken = async function (user_id) {
 
     return response
 }
-
 
 var getFirstTimeToken = async function (user_id, auth_code) {
     return requestAuthToken(user_id, "grant_type=ecobeePin" + "&code=" + auth_code)
