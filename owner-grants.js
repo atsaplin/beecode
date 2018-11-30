@@ -3,13 +3,7 @@ var authentication = require('./authentication')
 var randomstring = require("randomstring");
 
 var addGrant = async function (req, res) {
-    if (!(await authentication.CheckAuthenticationOwner(req.body))) {
-        res.status(401).send({
-            Error: "Authentication Error",
-            Message: "Provided auth_token or user_id failed authentication"
-        })
-        return
-    }
+    await authentication.CheckAuthenticationOwner(req.body, res)
 
     var access_code = randomstring.generate({
         length: 6,
@@ -17,17 +11,11 @@ var addGrant = async function (req, res) {
         capitalization: 'uppercase'
     })
 
-    var grant = {
-        user_id: req.body.user_id,
-        thermostats: req.body.thermostats,
-        home: req.body.home,
-        address: req.body.address,
-        start: req.body.start,
-        end: req.body.end,
-        access_token: null,
-        access_code: access_code,
-        redeemed: false
-    }
+    var grant = req.body
+    delete grant["auth_token"]
+    grant.access_token = null
+    grant.redeemed = false
+    grant.access_code = access_code
 
     //update with either the new provided tokens, or the ones obtained from when we performed
     //a check against the existing key
@@ -40,13 +28,7 @@ var addGrant = async function (req, res) {
 }
 
 var getGrants = async function (req, res) {
-    if (!(await authentication.CheckAuthenticationOwner(req.body))) {
-        res.status(401).send({
-            Error: "Authentication Error",
-            Message: "Provided auth_token or user_id failed authentication"
-        })
-        return
-    }
+    await authentication.CheckAuthenticationOwner(req.body, res)
 
     await db.DBgetDB().collection('grants').find({user_id : req.body.user_id}, {
         projection: {
@@ -61,17 +43,20 @@ var getGrants = async function (req, res) {
 }
 
 var removeGrant = async function (req, res) {
-    if (!(await authentication.CheckAuthenticationOwner(req.body))) {
-        res.status(401).send({
-            Error: "Authentication Error",
-            Message: "Provided auth_token or user_id failed authentication"
-        })
-        return
-    }
+    await authentication.CheckAuthenticationOwner(req.body, res)
 
     await db.DBgetDB().collection('grants').findOneAndDelete({ user_id: req.body.user_id, access_code: req.body.access_code }, function (err, result) {
         if (err) throw err;
-        res.status(200).send(result)
+        if (!result.value) {
+            res.status(400).send({
+                error: "Non-existant grant",
+                message: "Grant does not exist, has been revoked, or already used"
+            })
+            return
+        }
+        delete result.value["_id"]
+        delete result.value["access_token"]
+        res.status(200).send(result.value)
     })
 }
 

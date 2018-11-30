@@ -80,10 +80,13 @@ var requestAuthToken = async function (user_id, token_options) {
     })
 }
 
-var checkAuthenticationOwner = async function (query) {
+var checkAuthenticationOwner = async function (query, res) {
     if (!query.auth_token || !query.user_id) {
-        console.log("Authentication check with missing auth_token or user_id")
-        return false
+        res.status(401).send({
+            error: "Authentication Error",
+            message: "Provided auth_token or user_id failed authentication"
+        })
+        throw "Parameter Error"
     }
 
     var ownerDocument = await db.DBgetUserByID(query.user_id)
@@ -92,7 +95,11 @@ var checkAuthenticationOwner = async function (query) {
     }
 
     console.log(`Authentication failure for ${query.user_id}`)
-    return false
+    res.status(401).send({
+        error: "Authentication Error",
+        message: "Provided auth_token or user_id failed authentication"
+    })
+    throw "Parameter Error"
 }
 
 
