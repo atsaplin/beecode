@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const http = require('https')
 var config = require('./config');
 var randomstring = require("randomstring");
+var request = require('request');
 
 
 var getNewAuthToken = function (ownerDocument) {
@@ -53,7 +54,7 @@ var checkAuthenticationOwner = async function (query) {
 var removeOwner = async function (user_id) {
     console.log(`Deleting user ${user_id}`)
     db.DBgetDB().collection('owners').findOneAndDelete({ user_id: user_id }).then(
-        db.DBgetDB().collection('grants').deleteMany({user_id: user_id})
+        db.DBgetDB().collection('grants').deleteMany({ user_id: user_id })
     )
 }
 
@@ -135,7 +136,45 @@ var registerOwner = async function (req, res) {
     }
 }
 
+var
+
+var addApplication = async function (req, res) {
+    if (!req.body.session_token || !req.body.pin || !req.body.auth_code) {
+        res.status(422).send({
+            Error: "Missing paramters",
+            Message: "Must provide session_token, pin, auth_code"
+        })
+        return
+    }
+
+    console.log(`Performing auxilary application authentication with pin ${req.body.pin}`)
+
+    // Set the headers
+    var headers = {
+        'Authorization': 'Bearer ' + req.body.session_token,
+        'Content-Type': 'application/json'
+    }
+
+    const options = {
+        hostname: 'api.ecobee.com',
+        path: '/home/api/1/developer/app/authorize?format=json',
+        method: 'POST',
+        headers: headers,
+    };
+
+    const pReq = http.request(options, (pRes) => {
+        pRes.setEncoding('utf8')
+        pRes.on('data', (d) => {
+            res.status(200).send(d)
+        })
+    });
+
+    pReq.write(JSON.stringify({"pin":req.body.pin}))
+    pReq.end()
+}
+
 module.exports = {
     RegisterOwner: registerOwner,
-    CheckAuthenticationOwner: checkAuthenticationOwner
+    CheckAuthenticationOwner: checkAuthenticationOwner,
+    AddApplication: addApplication
 }

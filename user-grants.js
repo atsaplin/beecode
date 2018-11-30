@@ -61,7 +61,7 @@ var activateGrant = async function (req, res) {
     await db.DBgetDB().collection('grants').findOneAndUpdate({
         access_code: req.body.access_code,
         redeemed: false
-    }, { $set: { redeemed: true, access_token: randomstring.generate() } }, { upsert: false, returnOriginal: false }, function (err, doc) {
+    }, { $set: { redeemed: true, access_token: randomstring.generate(128) } }, { upsert: false, returnOriginal: false }, function (err, doc) {
         if (err) { throw err; }
         else {
             if (!doc.value) {
