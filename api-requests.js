@@ -49,11 +49,7 @@ var setHold = async function (req, res) {
 
     var query = {
         "selection": {
-            "includeRuntime": true,
-            "includeEvents": true,
-            "includeSettings": true,
             "includeSensors": true,
-            "includeEquipmentStatus": true
         },
         "functions": [
             {

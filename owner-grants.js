@@ -26,7 +26,7 @@ var addGrant = async function (req, res) {
     //a check against the existing key
     await db.DBgetDB().collection('grants').insertOne(grant)
 
-    delete grant["access_code"]
+    delete grant["access_token"]
     delete grant["_id"]
 
     //TODO: we should validate the grant
