@@ -21,6 +21,6 @@ app.post('/api/user_getGrant', user_grants.GetGrant)
 app.post('/api/addApplication', authentication.AddApplication)
 app.post('/api/user_activateGrant', user_grants.ActivateGrant)
 
-
 app.post('/api/user_getTstatInfo', api_requests.GetTstatInfo)
 app.post('/api/user_SetHold', api_requests.SetHold)
+app.post('/api/user_CancelHold', api_requests.CancelHold)

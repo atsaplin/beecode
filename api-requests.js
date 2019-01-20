@@ -49,7 +49,6 @@ var setHold = async function (req, res) {
 
     var query = {
         "selection": {
-            "includeSensors": true,
         },
         "functions": [
             {
@@ -59,6 +58,21 @@ var setHold = async function (req, res) {
                     "heatHoldTemp": req.body.heat,
                     "coolHoldTemp": req.body.cool
                 }
+            }
+        ]
+    }
+    res.status(200).send(makeRequest(req, res, query, 'POST'))
+}
+
+var cancelHold = async function (req, res) {
+
+    var query = {
+        "selection": {
+        },
+        "functions": [
+            {
+                "type": "resumeProgram",
+                "resumeAll": true
             }
         ]
     }
@@ -150,5 +164,6 @@ var getMinData = function (fullResponse) {
 
 module.exports = {
     GetTstatInfo: getTstatInfo,
-    SetHold: setHold
+    SetHold: setHold,
+    CancelHold: cancelHold,
 }
